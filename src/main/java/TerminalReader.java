@@ -17,8 +17,9 @@ public class TerminalReader {
         System.out.println("Najpierw zdefiniuj swoją unikalną nazwę użytkownika: ");
 
         String username = in.nextLine();
+        var users = APICommunicator.getAllUsers();
 
-        while (APICommunicator.getAllUsers().contains(username)) {
+        while (users.contains(username)) {
             System.out.println("Podana nazwa użytkownika istnieje już w systemie. Podaj inny nick: ");
             username = in.nextLine();
         }
@@ -32,7 +33,7 @@ public class TerminalReader {
         }
 
         int i = 1;
-        for (var user : APICommunicator.getAllUsers()) {
+        for (var user : users) {
             System.out.println(String.valueOf(i) + ": " + user);
             i += 1;
         }
@@ -40,13 +41,13 @@ public class TerminalReader {
         System.out.print("Numer użytkownika: ");
         int numberOfUser = in.nextInt();
 
-        while (numberOfUser <= 0 || numberOfUser > APICommunicator.getAllUsers().size()) {
+        while (numberOfUser <= 0 || numberOfUser > users.size()) {
             System.out.print("Nieprawidłowy numer użytkownika! Ponów próbę: ");
             numberOfUser = in.nextInt();
         }
 
         System.out.println();
-        System.out.println("Napisz treść wiadomości do " + APICommunicator.getAllUsers().get(numberOfUser) + ":");
+        System.out.println("Napisz treść wiadomości do " + users.get(numberOfUser) + ":");
 
         String message = in.nextLine();
     }
