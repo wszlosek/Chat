@@ -23,9 +23,9 @@ public class Send {
             channel.exchangeDeclare(QUEUE_NAME, "fanout");
             Gson gson = new Gson();
             String content = "hello!";
-            MESSAGE m = new MESSAGE("Wojtek", content, "f");
-            channel.basicPublish(QUEUE_NAME, "", null, gson.toJson(m).getBytes(StandardCharsets.UTF_8));
-            System.out.println(" [x] Sent '" + m + "'");
+            // MESSAGE m = new MESSAGE("Wojtek", content, "f");
+            //channel.basicPublish(QUEUE_NAME, "", null, gson.toJson(m).getBytes(StandardCharsets.UTF_8));
+            //System.out.println(" [x] Sent '" + m + "'");
         } catch (Exception e) {
             e.printStackTrace();
         }

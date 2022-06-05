@@ -5,19 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e082f9cb-8b09-4748-b49d-31022b7336be" name="Changes" comment="preparing">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/APICommunicator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Backend.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ChannelType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Chat.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/TerminalReader.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/TerminalWriter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/notImp/Test.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/MESSAGE.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MESSAGE.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/APICommunicator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/APICommunicator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Recv.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/notImp/Recv.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Send.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/notImp/Send.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/notImp/Send.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/notImp/Send.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +23,37 @@
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Chat" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Chat" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Chat" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -62,13 +85,14 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="nodejs_package_manager_path" value="npm" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Test">
+  <component name="RunManager" selected="Gradle.Chat [jar]">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="Chat.main" />
@@ -83,8 +107,30 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Chat [jar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="jar" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.Chat [jar]" />
         <item itemvalue="Application.Test" />
         <item itemvalue="Application.Main" />
       </list>
@@ -101,6 +147,8 @@
       <workItem from="1654361103287" duration="774000" />
       <workItem from="1654387346109" duration="8026000" />
       <workItem from="1654417551602" duration="5728000" />
+      <workItem from="1654432400484" duration="2327000" />
+      <workItem from="1654434885051" duration="606000" />
     </task>
     <task id="LOCAL-00001" summary="Hello, World!">
       <created>1654361340940</created>
