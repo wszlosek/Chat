@@ -50,5 +50,6 @@ public class TerminalReader {
         System.out.println("Napisz treść wiadomości do " + users.get(numberOfUser) + ":");
 
         String message = in.nextLine();
+        backend.sendPrivateMessage(message, username);
     }
 }
