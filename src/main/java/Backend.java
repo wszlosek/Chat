@@ -7,122 +7,138 @@ import com.rabbitmq.client.DeliverCallback;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class Backend {
-
-    private static final Gson gson = new Gson();
-    private static Channel channel;
-    private static String username;
+    boolean isLoggedIn = false;
+    private final String publicExchangeName = "GLOBAL_EXCHANGE";
     private final String QUEUE_HOST;
     private final String QUEUE_USER;
     private final String QUEUE_PASSWORD;
-    private final TerminalWriter terminalWriter;
+    private final TerminalWriter terminalWriter = new TerminalWriter();
+    private final Gson gson = new Gson();
+    private Connection connection;
+    private Channel channel;
+    private String personalUsername;
+    private String personalQueueName;
+    private String personalConsumeTag;
 
-    public Backend(String QUEUE_HOST, String QUEUE_USER, String QUEUE_PASSWORD) throws IOException, TimeoutException {
+    public Backend(String QUEUE_HOST, String QUEUE_USER, String QUEUE_PASSWORD){
         this.QUEUE_HOST = QUEUE_HOST;
         this.QUEUE_USER = QUEUE_USER;
         this.QUEUE_PASSWORD = QUEUE_PASSWORD;
-        terminalWriter = new TerminalWriter();
-        configureChannel();
     }
 
-    private void configureChannel() throws IOException, TimeoutException {
+    private void configureConnection() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(QUEUE_HOST);
         factory.setUsername(QUEUE_USER);
         factory.setPassword(QUEUE_PASSWORD);
         factory.setVirtualHost(QUEUE_USER);
-        Connection connection = factory.newConnection();
+        connection = factory.newConnection();
         channel = connection.createChannel();
     }
 
-    public void start() {
-
+    private void shutdownConnection() throws IOException, TimeoutException {
+        channel.close();
+        connection.close();
     }
 
-    private String getQueueName(String userName) {
+    private static String getQueueName(String userName) {
         return "msg:" + userName;
     }
 
-    public String getExchangeName(String channelName) {
+    private static String getExchangeName(String channelName) {
         return "msg:" + channelName;
     }
 
-    public void messageReceiver(String messageContent) throws Exception {
+    private void startReceiving() {
         try {
-
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-                String m = new String(delivery.getBody(), StandardCharsets.UTF_8);
-                System.out.println(" [x] Received '" + m + "'" + ", " + Instant.now());
-                MESSAGE m2 = gson.fromJson(m, MESSAGE.class);
-                terminalWriter.writeMessage(m2);
+                String receivedMessage = new String(delivery.getBody(), StandardCharsets.UTF_8);
+                System.out.println(" [x] Received '" + receivedMessage + "'" + ", " + Instant.now());
+                MESSAGE formattedMessage = gson.fromJson(receivedMessage, MESSAGE.class);
+                terminalWriter.writeMessage(formattedMessage);
             };
-
-            channel.basicConsume("msg:" + username, true, deliverCallback, consumerTag -> {
+            personalConsumeTag = channel.basicConsume(personalQueueName, true, deliverCallback, consumerTag -> {
             });
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void sendPublicMessage(String messageContent) throws Exception {
+    private void stopReceiving() throws IOException {
+        channel.basicCancel(personalConsumeTag);
+    }
+
+    public void login(String chosenName) throws Exception {
+        configureConnection();
+        personalUsername = chosenName;
+        personalQueueName = getQueueName(chosenName);
+        channel.queueDeclare(personalQueueName, false, true, true, null);
+        startReceiving();
+        isLoggedIn = true;
+    }
+
+    public void logout() throws Exception {
+        stopReceiving();
+        channel.queueDelete(personalQueueName);
+        shutdownConnection();
+        isLoggedIn = false;
+    }
+
+    public void sendPublicMessage(String messageContent) {
         try {
-//            channel.exchangeDeclare("GLOBAL_EXCHANGE", "fanout");
+            channel.exchangeDeclare(publicExchangeName, "fanout");
 
-            MESSAGE m = new MESSAGE(username, ChannelType.GLOBAL.toString(), messageContent);
-            channel.basicPublish("GLOBAL_EXCHANGE", "", null, gson.toJson(m).getBytes(StandardCharsets.UTF_8));
-
+            MESSAGE messageToSend = new MESSAGE(personalUsername, ChannelType.GLOBAL.toString(), messageContent);
+            channel.basicPublish(publicExchangeName, "", null, gson.toJson(messageToSend).getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void sendChannelMessage(String messageContent, String channelName) throws Exception {
+    public void sendChannelMessage(String messageContent, String channelName) {
         try {
-            channel.exchangeDeclare("msg:" + channelName, "fanout");
+            String exchangeName = getExchangeName(channelName);
+            channel.exchangeDeclare(exchangeName, "fanout");
 
-            MESSAGE m = new MESSAGE(username, "msg:" + channelName, ChannelType.NORMAL.toString(), messageContent);
-            channel.basicPublish("msg:" + channelName, "", null, gson.toJson(m).getBytes(StandardCharsets.UTF_8));
+            MESSAGE messageToSend = new MESSAGE(personalUsername, channelName, ChannelType.NORMAL.toString(), messageContent);
+            channel.basicPublish(exchangeName, "", null, gson.toJson(messageToSend).getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void sendPrivateMessage(String messageContent, String userName) throws Exception {
+    public void sendPrivateMessage(String messageContent, String userName) {
         try {
-//            channel.queueDeclare(userName,false,false,true, null);
-
-            MESSAGE m = new MESSAGE(username, ChannelType.DIRECT.toString(), messageContent);
-            channel.basicPublish("", userName, null, gson.toJson(m).getBytes(StandardCharsets.UTF_8));
+            String queueName = getQueueName(userName);
+            MESSAGE messageToSend = new MESSAGE(personalUsername, ChannelType.DIRECT.toString(), messageContent);
+            channel.basicPublish("", queueName, null, gson.toJson(messageToSend).getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void createChannel(String channelName) throws Exception {
-        channel.exchangeDeclare("msg:" + channelName, "fanout");
+        String exchangeName = getExchangeName(channelName);
+        channel.exchangeDeclare(exchangeName, "fanout");
     }
 
     public void deleteChannel(String channelName) throws Exception {
-        channel.exchangeDelete("msg:" + channelName);
+        String exchangeName = getExchangeName(channelName);
+        channel.exchangeDelete(exchangeName);
     }
 
     public void addUserToChannel(String channelName, String userName) throws Exception {
-        channel.queueBind("msg:" + userName, "msg:" + channelName, "");
+        String exchangeName = getExchangeName(channelName);
+        String queueName = getQueueName(userName);
+        channel.queueBind(queueName, exchangeName, "");
     }
 
     public void removeUserFromChannel(String channelName, String userName) throws Exception {
-        channel.queueUnbind("msg:" + userName, "msg:" + channelName, "");
-    }
-
-    public void login(String chosenName) throws Exception {
-        channel.queueDeclare("msg:" + chosenName, false, true, true, null);
-    }
-
-    public void logout() throws Exception {
-        channel.queueDelete("msg:" + username);
+        String exchangeName = getExchangeName(channelName);
+        String queueName = getQueueName(userName);
+        channel.queueUnbind(queueName, exchangeName, "");
     }
 }
