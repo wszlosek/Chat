@@ -1,69 +1,70 @@
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
+import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
 public class APICommunicator {
     private final String login = "dmnzyvrm";
     private final String password = "jLEQ9JpcRs7JXzWg4mYM9GwZp2xQ9uqP";
-    private final String apiAddress = "http://hawk.rmq.cloudamqp.com/api/exchanges";
+    private final String apiAddress = "https://hawk.rmq.cloudamqp.com/api/";
 
-    public List<String> getAllChannels() throws IOException, InterruptedException {
-        System.out.println(getJSON(apiAddress, 1000000000));
-        return null;
-    }
+    public List<String> getAllChannels() throws IOException {
+        var json = getJSON(apiAddress + "exchanges");
+        JSONArray jsonArray = new JSONArray(json);
+        var result = new ArrayList<String>();
 
-    public List<String> getAllUsers() {
-        return null;
-    }
-
-    public String getJSON(String url, int timeout) {
-
-        var auth = login + ":" + password;
-        var auth2 = String.valueOf(Base64.getEncoder().encode(auth.getBytes(StandardCharsets.UTF_8)));
-        HttpURLConnection c = null;
-        try {
-            URL u = new URL(url);
-            c = (HttpURLConnection) u.openConnection();
-            c.setRequestMethod("GET");
-            c.setRequestProperty("Content-Type", "application/json");
-            c.setRequestProperty("Authorization", "Basic " + auth2);
-            c.connect();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-            br.close();
-            return sb.toString();
-
-        } catch (MalformedURLException ex) {
-            // Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            //  Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (c != null) {
-                try {
-                    c.disconnect();
-                } catch (Exception ex) {
-                    //   Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            return null;
+        for(int i = 0; i < jsonArray.length(); i++) {
+            var c = jsonArray.getJSONObject(i);
+            result.add(c.getString("name"));
         }
+
+        return result;
+    }
+
+    public List<String> getAllUsers() throws IOException {
+        var json = getJSON(apiAddress + "queues");
+        JSONArray jsonArray = new JSONArray(json);
+        var result = new ArrayList<String>();
+
+        for(int i = 0; i < jsonArray.length(); i++) {
+            var c = jsonArray.getJSONObject(i);
+            result.add(c.getString("name").replace("msg:", ""));
+        }
+
+        return result;
+    }
+
+    public String getJSON(String address) throws IOException {
+        var auth = login + ":" + password;
+        String basicAuth = "Basic " + new String(Base64.getEncoder().encode(auth.getBytes()));
+
+        var url = new URL(address);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestProperty("Authorization",  basicAuth);
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Content-Type", "application/json");
+        StringBuilder response = new StringBuilder();
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+            String line;
+            while ((line = in.readLine()) != null) {
+                response.append(line);
+            }
+        }
+
+        return response.toString();
     }
 }

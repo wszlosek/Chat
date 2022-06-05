@@ -1,3 +1,15 @@
+import javax.net.ssl.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Base64;
+
 public class Main {
     private final static String QUEUE_NAME = "chat";
     private final static String QUEUE_HOST = "hawk.rmq.cloudamqp.com";
@@ -9,5 +21,7 @@ public class Main {
     //    c.start();
         var a = new APICommunicator();
         a.getAllChannels();
+        System.out.println(a.getAllUsers());
     }
+
 }
