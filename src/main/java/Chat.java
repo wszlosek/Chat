@@ -11,7 +11,7 @@ public class Chat {
         terminalReader = new TerminalReader(backend);
     }
 
-    public void start() {
+    public void start() throws IOException {
         terminalReader.start();
     }
 }
