@@ -28,13 +28,13 @@ public class TerminalReader {
                 "Wpisz dany numer użytkownika, by napisać do niego wiadomość.");
 
 
-        if (APICommunicator.getAllUsers().isEmpty()) {
+        if (users.isEmpty()) {
             System.out.println("<Brak innych użytkowników>");
         }
 
         int i = 1;
         for (var user : users) {
-            System.out.println(String.valueOf(i) + ": " + user);
+            System.out.println(i + ": " + user);
             i += 1;
         }
 
