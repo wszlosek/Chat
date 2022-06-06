@@ -6,15 +6,18 @@ public class Test {
 
 
     public static void main(String[] argv) throws Exception {
-        Backend b = new Backend(QUEUE_HOST, QUEUE_USER, QUEUE_PASSWORD);
-        b.login("Wojak2");
+//        Backend b = new Backend(QUEUE_HOST, QUEUE_USER, QUEUE_PASSWORD);
+   //     b.login("viju");
 //        b.sendPublicMessage("hello");
 //
-//        b.createChannel("duuuuuuuuuuuuuupa2");
+    //    b.createChannel("wojak sie nie myje");
 //        b.addUserToChannel("duuuuuuuuuuuuuupa2","wojak");
 //        b.sendChannelMessage("apud apud","duuuuuuuuuuuuuupa2");
 //        b.deleteChannel("duuuuuuuuuuuuuupa2");
-        b.logout();
+      //  b.logout();
+
+        var a = new APICommunicator();
+        a.getChannelsFromUser("c1");
 
     }
 }
