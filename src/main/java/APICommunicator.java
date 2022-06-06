@@ -48,6 +48,40 @@ public class APICommunicator {
         return result;
     }
 
+    public List<String> getUsersFromChannel(String channelName) throws IOException {
+        channelName = channelName.replace("msg:", "");
+        var json = getJSON(apiAddress + "bindings");
+        JSONArray jsonArray = new JSONArray(json);
+        var result = new ArrayList<String>();
+
+        for(int i = 0; i < jsonArray.length(); i++) {
+            var c = jsonArray.getJSONObject(i);
+            if (c.getString("source").replace("msg:", "").equals(channelName)) {
+                result.add(c.getString("destination").replace("msg:", ""));
+            }
+        }
+        System.out.println(result);
+
+        return result;
+    }
+
+    public List<String> getChannelsFromUser(String userName) throws IOException {
+        userName = userName.replace("msg:", "");
+        var json = getJSON(apiAddress + "bindings");
+        JSONArray jsonArray = new JSONArray(json);
+        var result = new ArrayList<String>();
+
+        for(int i = 0; i < jsonArray.length(); i++) {
+            var c = jsonArray.getJSONObject(i);
+            if (c.getString("destination").replace("msg:", "").equals(userName)) {
+                result.add(c.getString("source").replace("msg:", ""));
+            }
+        }
+        System.out.println(result);
+
+        return result;
+    }
+
     public String getJSON(String address) throws IOException {
         var auth = login + ":" + password;
         String basicAuth = "Basic " + new String(Base64.getEncoder().encode(auth.getBytes()));
