@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class TerminalReader {
@@ -15,45 +16,92 @@ public class TerminalReader {
     public void start() throws Exception {
 
         while (true) {
-            System.out.println("Witaj w naszym komunikatorze.");
-            System.out.println("Najpierw zdefiniuj swoją unikalną nazwę użytkownika: ");
-            var users = APICommunicator.getAllUsers();
-            String username = in.nextLine();
 
-            while (users.contains(username)) {
-                System.out.println("Podana nazwa użytkownika istnieje już w systemie. Podaj inny nick: ");
-                username = in.nextLine();
-            }
-            backend.login(username);
+            String nick;
+            String command;
 
-            System.out.println("Cześć, " + username + "! W naszej aplikacji możesz skorzystać z " +
-                    "kilku trybów:");
+            do {
+                System.out.println("---");
+                System.out.print("Your nickname: ");
+                nick = in.nextLine();
+            } while (APICommunicator.getAllUsers().contains(nick));
 
-            var choice = 1;
-            while (choice == 1 || choice == 2 || choice == 3 || choice == 4 ||
-                    choice == 5 || choice == 6 || choice == 7 || choice == 8) {
-                System.out.println("1. Napisz prywatnie do jednego z dostępnych użytkowników \n" +
-                        "2. Napisz publiczną wiadomość \n" +
-                        "3. Stwórz nowy kanał \n" +
-                        "4. Dodaj użytkownika do kanału \n" +
-                        "5. Usuń użytkownika z kanału \n" +
-                        "6. Napisz wiadomość na danym kanale \n" +
-                        "7. Usuń kanał \n" +
-                        "8. Wyloguj się");
+            backend.login(nick);
 
-                choice = in.nextInt();
-                switch (choice) {
-                    case 1 -> sendPrivateMessage();
-                    case 2 -> sendPublicMessage();
-                    case 3 -> createNewChannel();
-                    case 4 -> addNewUserToChannel(username);
-                    case 5 -> removeUserFromChannel(username);
-                    case 6 -> sendMessageOnChannel(username);
-                    case 7 -> removeChannel(username);
-                    case 8 -> logout();
-                    default -> System.out.println("Nieprawidłowe polecenie!");
+            do {
+                System.out.println("---");
+                System.out.print("Command: ");
+                command = in.nextLine();
+                System.out.println(command);
+
+                if (command.toLowerCase(Locale.ROOT).contains("-users")) {
+                    System.out.println(APICommunicator.getAllUsers());
+                } else if (command.toLowerCase(Locale.ROOT).contains("-channels")) {
+                    System.out.println(APICommunicator.getChannelsFromUser(nick));
+                } else if (command.toLowerCase(Locale.ROOT).contains("-private")) {
+                    var par = command.split(" ");
+                    var user = par[1];
+                    var message = par[2];
+                    if (APICommunicator.getAllUsers().contains(user)) {
+                        backend.sendPrivateMessage(message, user);
+                    } else {
+                        System.out.println("User " + user + "does not exist!");
+                    }
+                } else if (command.toLowerCase(Locale.ROOT).contains("-public")) {
+                    var par = command.split(" ");
+                    var message = par[1];
+                    backend.sendPublicMessage(message);
+                } else if (command.toLowerCase(Locale.ROOT).contains("-new channel")) {
+                    var par = command.split(" ");
+                    var newChannelName = par[2];
+                    if (APICommunicator.getAllChannels().contains(newChannelName)) {
+                        backend.createChannel(newChannelName);
+                    } else {
+                        System.out.println("Channel " + newChannelName + "does not exist!");
+                    }
+                } else if (command.toLowerCase(Locale.ROOT).contains("-remove channel")) {
+                    var par = command.split(" ");
+                    var channelToRemoveName = par[2];
+                    if (APICommunicator.getAllChannels().contains(channelToRemoveName)
+                            && APICommunicator.getChannelsFromUser(nick).contains(channelToRemoveName)) {
+                        backend.deleteChannel(channelToRemoveName);
+                    } else {
+                        System.out.println("Channel " + channelToRemoveName + "does not exist!");
+                    }
+                } else if (command.toLowerCase(Locale.ROOT).contains("-add user")) {
+                    var par = command.split(" ");
+                    var user = par[2];
+                    var channel = par[4];
+
+                    if (APICommunicator.getChannelsFromUser(nick).contains(channel) && APICommunicator.getAllUsers().contains(user)) {
+                        backend.addUserToChannel(channel, user);
+                    } else {
+                        System.out.println("Error");
+                    }
+                } else if (command.toLowerCase(Locale.ROOT).contains("-remove user")) {
+                    var par = command.split(" ");
+                    var user = par[2];
+                    var channel = par[4];
+
+                    if (APICommunicator.getChannelsFromUser(nick).contains(channel)
+                            && APICommunicator.getAllUsers().contains(user) && APICommunicator.getChannelsFromUser(user).contains(channel)) {
+                        backend.removeUserFromChannel(channel, user);
+                    } else {
+                        System.out.println("Error");
+                    }
+                } else if (command.toLowerCase(Locale.ROOT).contains("-message")) {
+                    var par = command.split(" ");
+                    var message = par[1];
+                    var channel = par[2];
+
+                    if (APICommunicator.getChannelsFromUser(nick).contains(channel)) {
+                        backend.sendChannelMessage(message, channel);
+                    } else {
+                        System.out.println("Error");
+                    }
                 }
-            }
+
+            } while (!command.toLowerCase(Locale.ROOT).contains("-logout"));
         }
     }
 
