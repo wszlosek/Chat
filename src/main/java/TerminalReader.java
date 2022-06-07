@@ -102,6 +102,8 @@ public class TerminalReader {
                 }
 
             } while (!command.toLowerCase(Locale.ROOT).contains("-logout"));
+
+            backend.logout();
         }
     }
 
