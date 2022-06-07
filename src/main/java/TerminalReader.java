@@ -54,10 +54,10 @@ public class TerminalReader {
                 } else if (command.toLowerCase(Locale.ROOT).contains("-new channel")) {
                     var par = command.split(" ");
                     var newChannelName = par[2];
-                    if (APICommunicator.getAllChannels().contains(newChannelName)) {
+                    if (!APICommunicator.getAllChannels().contains(newChannelName)) {
                         backend.createChannel(newChannelName);
                     } else {
-                        System.out.println("Channel " + newChannelName + "does not exist!");
+                        System.out.println("Channel " + newChannelName + " does not exist!");
                     }
                 } else if (command.toLowerCase(Locale.ROOT).contains("-remove channel")) {
                     var par = command.split(" ");
@@ -66,7 +66,7 @@ public class TerminalReader {
                             && APICommunicator.getChannelsFromUser(nick).contains(channelToRemoveName)) {
                         backend.deleteChannel(channelToRemoveName);
                     } else {
-                        System.out.println("Channel " + channelToRemoveName + "does not exist!");
+                        System.out.println("Channel " + channelToRemoveName + " does not exist!");
                     }
                 } else if (command.toLowerCase(Locale.ROOT).contains("-add user")) {
                     var par = command.split(" ");
