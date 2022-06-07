@@ -53,10 +53,11 @@ public class Backend {
     }
 
     private void startReceiving() {
+
         try {
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String receivedMessage = new String(delivery.getBody(), StandardCharsets.UTF_8);
-                System.out.println(" [x] Received '" + receivedMessage + "'" + ", " + Instant.now());
+                gson.fromJson(receivedMessage, MESSAGE.class);
                 MESSAGE formattedMessage = gson.fromJson(receivedMessage, MESSAGE.class);
                 terminalWriter.writeMessage(formattedMessage);
             };
@@ -75,8 +76,9 @@ public class Backend {
         configureConnection();
         personalUsername = chosenName;
         personalQueueName = getQueueName(chosenName);
-        channel.queueDeclare(personalQueueName, false, true, true, null);
+        channel.queueDeclare(personalQueueName, false, false, true, null);
         startReceiving();
+        channel.queueBind(personalQueueName, publicExchangeName, "");
         isLoggedIn = true;
     }
 
@@ -123,6 +125,7 @@ public class Backend {
     public void createChannel(String channelName) throws Exception {
         String exchangeName = getExchangeName(channelName);
         channel.exchangeDeclare(exchangeName, "fanout");
+        channel.queueBind(personalQueueName, exchangeName, "");
     }
 
     public void deleteChannel(String channelName) throws Exception {
