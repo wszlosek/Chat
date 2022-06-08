@@ -60,7 +60,6 @@ public class APICommunicator {
                 result.add(c.getString("destination").replace("msg:", ""));
             }
         }
-        System.out.println(result);
 
         return result;
     }
@@ -77,7 +76,6 @@ public class APICommunicator {
                 result.add(c.getString("source").replace("msg:", ""));
             }
         }
-        System.out.println(result);
 
         return result;
     }
