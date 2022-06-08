@@ -8,9 +8,9 @@ public class TerminalReader {
     private final APICommunicator APICommunicator;
     private final Scanner in = new Scanner(System.in);
 
-    public TerminalReader(Backend backend) {
+    public TerminalReader(Backend backend, String host, String login, String password) {
         this.backend = backend;
-        APICommunicator = new APICommunicator();
+        APICommunicator = new APICommunicator(host, login, password);
     }
 
     public void start() throws Exception {

@@ -18,9 +18,15 @@ import java.util.Base64;
 import java.util.List;
 
 public class APICommunicator {
-    private final String login = "dmnzyvrm";
-    private final String password = "jLEQ9JpcRs7JXzWg4mYM9GwZp2xQ9uqP";
-    private final String apiAddress = "https://hawk.rmq.cloudamqp.com/api/";
+    private final String login;
+    private final String password;
+    private final String apiAddress;
+
+    APICommunicator(String host, String login, String password) {
+        this.login = login;
+        this.password = password;
+        this.apiAddress = "https://" + host + "/api/";
+    }
 
     public List<String> getAllChannels() throws IOException {
         var json = getJSON(apiAddress + "exchanges");

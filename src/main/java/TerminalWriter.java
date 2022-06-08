@@ -1,5 +1,5 @@
 public class TerminalWriter {
-    public void writeMessage(MESSAGE message) {
+    public void writeMessage(Message message) {
         System.out.println(message.toString());
     }
 }

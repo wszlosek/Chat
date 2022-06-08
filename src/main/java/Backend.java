@@ -6,7 +6,6 @@ import com.rabbitmq.client.DeliverCallback;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.util.concurrent.TimeoutException;
 
 public class Backend {
@@ -57,8 +56,8 @@ public class Backend {
         try {
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String receivedMessage = new String(delivery.getBody(), StandardCharsets.UTF_8);
-                gson.fromJson(receivedMessage, MESSAGE.class);
-                MESSAGE formattedMessage = gson.fromJson(receivedMessage, MESSAGE.class);
+                gson.fromJson(receivedMessage, Message.class);
+                Message formattedMessage = gson.fromJson(receivedMessage, Message.class);
                 terminalWriter.writeMessage(formattedMessage);
             };
             personalConsumeTag = channel.basicConsume(personalQueueName, true, deliverCallback, consumerTag -> {
@@ -93,7 +92,7 @@ public class Backend {
         try {
             channel.exchangeDeclare(publicExchangeName, "fanout");
 
-            MESSAGE messageToSend = new MESSAGE(personalUsername, ChannelType.GLOBAL.toString(), messageContent);
+            Message messageToSend = new Message(personalUsername, ChannelType.GLOBAL.toString(), messageContent);
             channel.basicPublish(publicExchangeName, "", null, gson.toJson(messageToSend).getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,7 +104,7 @@ public class Backend {
             String exchangeName = getExchangeName(channelName);
             channel.exchangeDeclare(exchangeName, "fanout");
 
-            MESSAGE messageToSend = new MESSAGE(personalUsername, channelName, ChannelType.NORMAL.toString(), messageContent);
+            Message messageToSend = new Message(personalUsername, channelName, ChannelType.NORMAL.toString(), messageContent);
             channel.basicPublish(exchangeName, "", null, gson.toJson(messageToSend).getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
@@ -115,7 +114,7 @@ public class Backend {
     public void sendPrivateMessage(String messageContent, String userName) {
         try {
             String queueName = getQueueName(userName);
-            MESSAGE messageToSend = new MESSAGE(personalUsername, ChannelType.DIRECT.toString(), messageContent);
+            Message messageToSend = new Message(personalUsername, ChannelType.DIRECT.toString(), messageContent);
             channel.basicPublish("", queueName, null, gson.toJson(messageToSend).getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();

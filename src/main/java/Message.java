@@ -1,27 +1,27 @@
 import java.util.Objects;
 
-public final class MESSAGE {
+public final class Message {
     private final String sender;
     private final String channel;
     private final String channel_type;
     private final String message;
 
-    public MESSAGE(String sender, String channel, String channel_type, String message) {
+    public Message(String sender, String channel, String channel_type, String message) {
         this.sender = sender;
         this.channel = channel;
         this.channel_type = channel_type;
         this.message = message;
     }
 
-    MESSAGE(String sender, String channel_type, String message) {
+    Message(String sender, String channel_type, String message) {
         this(sender, "", channel_type, message);
     }
 
-    MESSAGE(String sender, String channel, ChannelType channel_type, String message) {
+    Message(String sender, String channel, ChannelType channel_type, String message) {
         this(sender, channel, channel_type.toString(), message);
     }
 
-    MESSAGE(String sender, ChannelType channel_type, String message) {
+    Message(String sender, ChannelType channel_type, String message) {
         this(sender, "", channel_type.toString(), message);
     }
 
@@ -45,7 +45,7 @@ public final class MESSAGE {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (MESSAGE) obj;
+        var that = (Message) obj;
         return Objects.equals(this.sender, that.sender) &&
                 Objects.equals(this.channel, that.channel) &&
                 Objects.equals(this.channel_type, that.channel_type) &&
