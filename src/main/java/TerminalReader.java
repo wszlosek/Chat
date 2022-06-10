@@ -21,7 +21,6 @@ public class TerminalReader {
             String command;
 
             do {
-                System.out.println("---");
                 System.out.print("Your nickname: ");
                 nick = in.nextLine();
             } while (APICommunicator.getAllUsers().contains(nick));
@@ -29,28 +28,8 @@ public class TerminalReader {
             backend.login(nick);
 
             do {
-                System.out.println("---");
                 command = in.nextLine();
-
-                if (command.toLowerCase(Locale.ROOT).contains("-users")) {
-                    System.out.println(APICommunicator.getAllUsers());
-                } else if (command.toLowerCase(Locale.ROOT).contains("-channels")) {
-                    System.out.println(APICommunicator.getChannelsFromUser(nick));
-                } else if (command.toLowerCase(Locale.ROOT).contains("-private")) {
-                    privateMessage(command);
-                } else if (command.toLowerCase(Locale.ROOT).contains("-public")) {
-                    publicMessage(command);
-                } else if (command.toLowerCase(Locale.ROOT).contains("-new channel")) {
-                    createNewChannel(command);
-                } else if (command.toLowerCase(Locale.ROOT).contains("-delete channel")) {
-                    deleteChannel(nick, command);
-                } else if (command.toLowerCase(Locale.ROOT).contains("-add user")) {
-                    addUserToChannel(nick, command);
-                } else if (command.toLowerCase(Locale.ROOT).contains("-delete user")) {
-                    deleteUserFromChannel(nick, command);
-                } else if (command.toLowerCase(Locale.ROOT).contains("-message")) {
-                    sendMessageOnChannel(nick, command);
-                }
+                validateCommand(nick, command);
 
             } while (!command.toLowerCase(Locale.ROOT).contains("-logout"));
 
@@ -58,8 +37,30 @@ public class TerminalReader {
         }
     }
 
+    private void validateCommand(String nick, String command) throws Exception {
+        if (command.toLowerCase(Locale.ROOT).contains("-users")) {
+            System.out.println(APICommunicator.getAllUsers());
+        } else if (command.toLowerCase(Locale.ROOT).contains("-channels")) {
+            System.out.println(APICommunicator.getChannelsFromUser(nick));
+        } else if (command.toLowerCase(Locale.ROOT).contains("-private")) {
+            privateMessage(command);
+        } else if (command.toLowerCase(Locale.ROOT).contains("-public")) {
+            publicMessage(command);
+        } else if (command.toLowerCase(Locale.ROOT).contains("-new channel")) {
+            createNewChannel(command);
+        } else if (command.toLowerCase(Locale.ROOT).contains("-delete channel")) {
+            deleteChannel(nick, command);
+        } else if (command.toLowerCase(Locale.ROOT).contains("-add user")) {
+            addUserToChannel(nick, command);
+        } else if (command.toLowerCase(Locale.ROOT).contains("-delete user")) {
+            deleteUserFromChannel(nick, command);
+        } else if (command.toLowerCase(Locale.ROOT).contains("-message")) {
+            sendMessageOnChannel(nick, command);
+        }
+    }
+
     private void sendMessageOnChannel(String nick, String command) throws IOException {
-        var par = command.replace("-message ", "").split(" ");
+        var par = command.replace("-message ", "").split(", ");
         var message = par[0];
         var channel = par[1];
 
