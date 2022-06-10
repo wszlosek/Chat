@@ -17,7 +17,7 @@ QUEUE_PASSWORD=<password from API>
 
 | command  |  result  | 
 |---|---|
-| -users  | list of users  |
+| -users  | list of active users  |
 | -channels | list of your channels  |
 | -private $username, $message | send private $message to $username |
 | -public $message | send public $message |
